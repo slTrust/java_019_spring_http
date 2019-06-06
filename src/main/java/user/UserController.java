@@ -11,7 +11,7 @@ import java.util.*;
 */
 @RestController
 public class UserController {
-    private Map<String,User> map = new HashMap<String,User>();
+    private final Map<String,User> map = new HashMap<>();
 
     UserController(){
         map.put("aaa",new User("aaa",11));
@@ -19,46 +19,47 @@ public class UserController {
         map.put("ccc",new User("ccc",33));
     }
 
-//    @GetMapping("/users")
-//    public List<User> getUsers() {
-//        Set<String> keys = map.keySet();
-//        List<User> res = new ArrayList<>();
-//        for (String name:keys) {
-//            res.add(map.get(name));
-//        }
-//        return res;
-//    }
-//
-//    @GetMapping("/users/{name}")
-//    public User getUserByName(@PathVariable("name") String name) {
-//        if(map.containsKey(name)){
-//            return map.get(name);
-//        }else{
-//            return null;
-//        }
-//    }
-//
-//    @PostMapping("/users")
-//    public User AddUser(@RequestBody User user) {
-//        String name = user.getName();
-//        map.put(name,user);
-//        return user;
-//    }
-//
-//    @PutMapping("/users")
-//    public User UpdateUser(@RequestBody User user) {
-//        String name = user.getName();
-//        map.put(name,user);
-//        return user;
-//    }
-//    @DeleteMapping("/users/{name}")
-//    public User DelUserByName(@PathVariable("name") String name){
-//        if(map.containsKey(name)){
-//            return map.remove(name);
-//        }else{
-//            return null;
-//        }
-//    }
+    /*
+    @GetMapping("/users")
+    public List<User> getUsers() {
+        Set<String> keys = map.keySet();
+        List<User> res = new ArrayList<>();
+        for (String name:keys) {
+            res.add(map.get(name));
+        }
+        return res;
+    }
+
+    @GetMapping("/users/{name}")
+    public User getUserByName(@PathVariable("name") String name) {
+        if(map.containsKey(name)){
+            return map.get(name);
+        }else{
+            return null;
+        }
+    }
+
+    @PostMapping("/users")
+    public User AddUser(@RequestBody User user) {
+        String name = user.getName();
+        map.put(name,user);
+        return user;
+    }
+
+    @PutMapping("/users/{name}")
+    public User UpdateUser(@PathVariable("name") String name ,@RequestBody User user) {
+        map.get(name).setAge(user.getAge());
+        return user;
+    }
+    @DeleteMapping("/users/{name}")
+    public User DelUserByName(@PathVariable("name") String name){
+        if(map.containsKey(name)){
+            return map.remove(name);
+        }else{
+            return null;
+        }
+    }
+    */
 
     @GetMapping("/users")
     ResponseEntity<List<User>> getUsers(){
@@ -75,7 +76,7 @@ public class UserController {
         if(map.containsKey(name)){
             return new ResponseEntity<>(map.get(name),HttpStatus.OK);
         }else{
-            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -83,7 +84,7 @@ public class UserController {
     public ResponseEntity<User>  AddUser(@RequestBody User user) {
         String name = user.getName();
         if(map.containsKey(name)){
-            return new ResponseEntity<>(map.get(name),HttpStatus.NOT_MODIFIED);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }else{
             map.put(name,user);
             return new ResponseEntity<>(map.get(name),HttpStatus.CREATED);
@@ -92,24 +93,23 @@ public class UserController {
 
 
 
-    @PutMapping("/users")
-    public ResponseEntity<User> UpdateUser(@RequestBody User user) {
-        String name = user.getName();
+    @PutMapping("/users/{name}")
+    public ResponseEntity<User> UpdateUser(@PathVariable("name") String name ,@RequestBody User user) {
         if(map.containsKey(name)){
+            User updateUser = map.get(name);
+            updateUser.setAge(user.getAge());
             return new ResponseEntity<>(map.get(name),HttpStatus.OK);
         }else{
-            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
-
 
     @DeleteMapping("/users/{name}")
     public ResponseEntity<User> DelUserByName(@PathVariable("name") String name){
         if(map.containsKey(name)){
             return new ResponseEntity<>(map.remove(name),HttpStatus.OK);
         }else{
-            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
